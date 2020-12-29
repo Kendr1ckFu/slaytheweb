@@ -26,6 +26,8 @@ export function generateGraph(opts) {
 	const options = Object.assign(defaultOptions, opts)
 	// if (options.maxEncounters > options.columns) options.maxEncounters = options.columns
 
+	console.log({opts, options})
+
 	function Node(type = false) {
 		return {type, edges: new Set()}
 	}

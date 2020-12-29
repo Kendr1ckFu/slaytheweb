@@ -1,4 +1,4 @@
-import {html} from '../../web_modules/htm/preact/standalone.module.js'
+import {Component, html} from '../../web_modules/htm/preact/standalone.module.js'
 import {generateGraph, findAndDrawPath} from '../game/map.js'
 import {random as randomBetween} from '../game/utils.js'
 
@@ -25,14 +25,93 @@ export default function map({dungeon}) {
 					</li>`
 			)}
 		</ul>
-		<slay-map
+		<${SlayMap2}
 			encounters="💀💀💀💀🦚"
 			rows=${dungeon.rooms.length}
 			columns="1"
 			minEncounters="1"
-			maxEncounters="1"
-		></slay-map>
+			maxEncounters="10"
+		><//>
 	`
+}
+
+function SlayMapNode(node) {
+	const type = node.type
+	if (!type) return html`<slay-map-node></slay-map-node>`
+	return html`<slay-map-encounter>${type}</slay-map-encounter>`
+}
+
+// This is an example of how you can render the graph as a map.
+export class SlayMap2 extends Component {
+	render(props) {
+		const {rows, columns, encounters, minEncounters, maxEncounters} = props
+		const graphOptions = {rows, columns, minEncounters, maxEncounters}
+		if (encounters) graphOptions.encounters = encounters
+
+		console.log('render')
+
+		// this.base.style.setProperty('--rows', rows)
+		// this.base.style.setProperty('--columns', columns)
+
+		const graph = generateGraph(graphOptions)
+		// this.setState({graph})
+
+		return html`
+			<slay-map>
+				${graph.map((row) => html` <slay-map-row> ${row.map(SlayMapNode)} </slay-map-row> `)}
+			</slay-map>
+		`
+	}
+	componentDidUpdate() {
+		// const {graph} = this.state
+		// if (!graph[0][0].el) this.addElementsToGraph(graph)
+		// this.scatter()
+		// this.drawPaths(graph)
+		// console.log({graph})
+	}
+	addElementsToGraph(graph) {
+		graph.forEach((row, rowIndex) => {
+			row
+				.filter((n) => n.type)
+				.forEach((node, nodeIndex) => {
+					// nth-of starts at 1, not 0
+					node.el = this.base.querySelector(
+						`slay-map-row:nth-of-type(${rowIndex + 1})
+							 slay-map-encounter:nth-of-type(${nodeIndex + 1})`
+					)
+				})
+		})
+	}
+	// Move the encounters around a bit.
+	scatter() {
+		const nodes = this.base.querySelectorAll('slay-map-encounter')
+		nodes.forEach((node) => {
+			node.style.transform = `translate3d(
+				${randomBetween(-35, 35)}%,
+				${randomBetween(-35, 35)}%,
+				0)
+			`
+		})
+	}
+	drawPaths(graph) {
+		const pathOption = this.props.paths
+		if (pathOption) {
+			Array.from(pathOption)
+				.map((string) => Number(string))
+				.forEach((pathIndex) => {
+					findAndDrawPath(graph, this, pathIndex)
+				})
+		} else {
+			// Draw a path for each col in row1, which connects to start.
+			console.time('mapRender')
+			graph[1].forEach((column, index) => {
+				setTimeout(() => {
+					findAndDrawPath(graph, this, index)
+				}, index * 100)
+			})
+			console.timeEnd('mapRender')
+		}
+	}
 }
 
 // This is an example of how you can render the graph as a map.
