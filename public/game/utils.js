@@ -8,6 +8,13 @@ export function uuid(a) {
 		: ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid)
 }
 
+// Get a random number within a range
+export function random(from, to) {
+	const r = range(1 + to - from, from) // random(2,4) = range(3,2)
+	if (from === to) return from // e.g. 5-5 returns 5 instead of 0
+	return shuffle(r)[0]
+}
+
 // Returns a new, shuffled version of an array.
 // See https://bost.ocks.org/mike/shuffle/
 export function shuffle(array) {
@@ -35,13 +42,6 @@ export function shuffle(array) {
 // range(3, 2) = [2,3,4]
 export function range(size, startAt = 0) {
 	return [...Array(size).keys()].map((i) => i + startAt)
-}
-
-// Get a random number within a range
-export function random(from, to) {
-	const r = range(1 + to - from, from) // random(2,4) = range(3,2)
-	if (from === to) return from // e.g. 5-5 returns 5 instead of 0
-	return shuffle(r)[0]
 }
 
 // Returns the current map node
@@ -125,3 +125,48 @@ export function clamp(x, lower, upper) {
 export function assert(condition, message) {
 	if (!condition) throw new Error(message)
 }
+
+export class backgrounds {
+	constructor() {
+		this.folder = '../images/scenes/'
+		this.images = [
+			// '1.jpg',
+			// 'arietty.jpg',
+			// 'bauhaus.jpg',
+			// 'chihiro.jpg',
+			// 'flying-duo.jpg',
+			'howl.jpg',
+			// 'landscape.jpg',
+			'laputa.jpg',
+			// 'mononoke.jpg',
+			// 'moonlit-landscape-1904.jpg',
+			// 'nausicaa.jpg',
+			'ponyo.jpg',
+		]
+		this.backupImages = [...this.images]
+		this.used = []
+	}
+	get() {
+		let index = random(0, 3)
+		// if (this.images.length === 1) index = 0
+		const image = this.images[index]
+		console.log(image)
+		// console.log('get', this.images, index, image)
+		// this.used.push(image)
+		// this.images.splice(index, 1)
+		// console.log(this.images)
+		return this.folder + image
+	}
+}
+
+// export function getBackground(state) {
+// 	const folder = '../images/scenes/'
+// 	const scenes = backgrounds.map((filename) => folder + filename)
+// 	const randomIndex = random(0, scenes.length - 1)
+// 	const scene = scenes[randomIndex]
+// 	// console.log(scene)
+// 	// console.log(backgrounds.length)
+// 	// backgrounds.splice(randomIndex, 1)
+// 	// console.log(backgrounds.length)
+// 	return scene
+// }
