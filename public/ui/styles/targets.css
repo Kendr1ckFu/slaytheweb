@@ -93,11 +93,6 @@
 	display: inline-block;
 	transform: scale(1.2);
 }
-@media (min-width: 800px) {
-	.Healthbar-label span {
-		transform: scale(1.7);
-	}
-}
 .Healthbar-bar {
 	position: absolute;
 	left: 0;
@@ -108,7 +103,7 @@
 	background: var(--yellow);
 	transition: width 400ms, background 200ms;
 	border-radius: 0.5rem;
-	font-size: 1.25rem;
+	/* font-size: 1.25rem; */
 	line-height: 1.3;
 	font-weight: bold;
 	text-shadow: 1px 1px 0 hsla(0, 0%, 95%, 0.8);
